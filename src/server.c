@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:26:03 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 02:51:16 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/08/31 03:59:53 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,33 +15,6 @@
 t_list	*g_pidlist;
 // se debe usar como global, ya que no se puede pasar argumentos al
 // signal handler, la firma ya está definida.
-
-static void	print_signal(int sig, int index)
-{
-	static int				bitcount[MAX_CLIENT];
-	static unsigned char	rechar[MAX_CLIENT];
-	static char				*str[MAX_CLIENT];
-
-	if (!str[index])
-		str[index] = ft_calloc(sizeof(char), 1);
-	rechar[index] <<= 1;
-	if (sig == SIGUSR1)
-		rechar[index] |= 1;
-	bitcount[index]++;
-	if (bitcount[index] == 8)
-	{
-		if (rechar[index] == '\0')
-		{
-			ft_printf("%s\n", str[index]);
-			free(str[index]);
-			str[index] = NULL;
-		}
-		else
-			str[index] = ft_charjoin(str[index], rechar[index]);
-		bitcount[index] = 0;
-		rechar[index] = 0;
-	}
-}
 
 void	signal_handler(int sig, siginfo_t *info, void *context)
 {
@@ -63,7 +36,7 @@ void	signal_handler(int sig, siginfo_t *info, void *context)
 	}
 	if (!current)
 		index = new_pidid(pidid, info);
-	print_signal(sig, index);
+	print_signal(sig, index, info->si_pid);
 }
 
 int	main(void)
