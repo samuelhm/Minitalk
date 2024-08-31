@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:26:03 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 06:29:23 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/08/31 23:35:58 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	main(void)
 	pid = getpid();
 	ft_printf("Server PID: %d\n", pid);
 	sa.sa_sigaction = signal_handler;
-	sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
+	sa.sa_flags = SA_SIGINFO | SA_NODEFER;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);
