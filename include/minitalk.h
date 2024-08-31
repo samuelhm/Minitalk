@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:28:01 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 06:27:18 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/08/31 06:30:41 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <limits.h>
 
 # ifndef MAX_CLIENT
-#  define MAX_CLIENT 50
+#  define MAX_CLIENT 500
 # endif
 
 typedef struct s_pidid
