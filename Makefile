@@ -6,7 +6,7 @@
 #    By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/27 02:23:38 by shurtado          #+#    #+#              #
-#    Updated: 2024/08/27 02:30:03 by shurtado         ###   ########.fr        #
+#    Updated: 2024/08/31 02:56:33 by shurtado         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -31,7 +31,7 @@ LIBFT_DIR = $(LIB_DIR)/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 # Source + obj
-SRV_SRCS_FILES = server.c
+SRV_SRCS_FILES = server.c handler_utils.c
 CLT_SRCS_FILES = client.c
 SSRCS = $(addprefix $(SRC_DIR)/,$(SRV_SRCS_FILES))
 CSRCS = $(addprefix $(SRC_DIR)/,$(CLT_SRCS_FILES))
@@ -72,9 +72,13 @@ clean:
 	@$(MAKE) --silent --no-print-directory -C $(LIBFT_DIR) fclean
 
 fclean: clean
-	@if [ -f "$(TARGET)" ]; then \
-		rm -f $(TARGET); \
-		echo "\033[1;31m$(TARGET) deleted\033[0m"; \
+	@if [ -f "$(SERVER)" ]; then \
+		rm -f $(SERVER); \
+		echo "\033[1;31m$(SERVER) deleted\033[0m"; \
+	fi
+	@if [ -f "$(CLIENT)" ]; then \
+		rm -f $(CLIENT); \
+		echo "\033[1;31m$(CLIENT) deleted\033[0m"; \
 	fi
 
 re: fclean all
