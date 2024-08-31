@@ -6,46 +6,58 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:27:18 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 04:04:36 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/08/31 06:29:38 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-volatile sig_atomic_t received = 0;
+volatile int	g_received = 0;
 
 void	handle_response(int sig)
 {
 	if (sig == SIGUSR1)
-		received = 1;
+		g_received = 1;
+}
+
+static void	send_next_char(char *str, int s_pid)
+{
+	int	bit;
+	int	i;
+
+	i = 7;
+	while (i >= 0)
+	{
+		bit = (*str >> i) & 1;
+		if (bit == 1)
+			kill(s_pid, SIGUSR1);
+		else
+			kill(s_pid, SIGUSR2);
+		i--;
+		usleep(50);
+	}
 }
 
 void	send_message(int s_pid, char *str)
 {
-	int	i;
-	int	bit;
+	int	timeout;
 
+	timeout = INT_MAX;
 	while (1)
 	{
-		received = 0;
-		while (!received)
+		g_received = 0;
+		send_next_char(str, s_pid);
+		while (!g_received && timeout > 0)
 		{
-			i = 7;
-			while (i >= 0)
-			{
-				bit = (*str >> i) & 1;
-				if (bit == 1)
-					kill(s_pid, SIGUSR1);
-				else
-					kill(s_pid, SIGUSR2);
-				i--;
-				usleep(200);
-			}
-			usleep(200);
+			usleep(1);
+			timeout -= 1;
 		}
-		if (*str == '\0')
+		if (timeout <= 0 && g_received == 0)
+			continue ;
+		else if (*str == '\0')
 			break ;
-		str++;
+		else
+			str++;
 	}
 }
 

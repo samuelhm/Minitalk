@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:26:03 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 03:59:53 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/08/31 06:29:23 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,12 @@ t_list	*g_pidlist;
 
 void	signal_handler(int sig, siginfo_t *info, void *context)
 {
-	t_pidid	*pidid;
-	t_list	*current;
-	int		index;
+	t_pidid		*pidid;
+	t_list		*current;
+	int			index;
 
 	(void)context;
+	pidid = NULL;
 	current = g_pidlist;
 	while (current)
 	{
@@ -35,7 +36,10 @@ void	signal_handler(int sig, siginfo_t *info, void *context)
 		current = current->next;
 	}
 	if (!current)
-		index = new_pidid(pidid, info);
+	{
+		pidid = malloc(sizeof(t_pidid));
+		index = new_pidid(&pidid, info);
+	}
 	print_signal(sig, index, info->si_pid);
 }
 
@@ -48,7 +52,7 @@ int	main(void)
 	pid = getpid();
 	ft_printf("Server PID: %d\n", pid);
 	sa.sa_sigaction = signal_handler;
-	sa.sa_flags = SA_SIGINFO;
+	sa.sa_flags = SA_SIGINFO | SA_ONSTACK;
 	sigemptyset(&sa.sa_mask);
 	sigaction(SIGUSR1, &sa, NULL);
 	sigaction(SIGUSR2, &sa, NULL);

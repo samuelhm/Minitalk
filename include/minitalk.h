@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:28:01 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 03:29:37 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/08/31 06:27:18 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ extern t_list				*g_pidlist;
 // VARS
 typedef struct sigaction	t_sigaction;
 
-int		new_pidid(t_pidid *pidid, siginfo_t *info);
+int		new_pidid(t_pidid **pidid, siginfo_t *info);
 void	print_signal(int sig, int index, int pid);
 
 #endif

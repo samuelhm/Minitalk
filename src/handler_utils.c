@@ -6,21 +6,18 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 02:36:54 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 03:36:30 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/08/31 06:28:20 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-int	new_pidid(t_pidid *pidid, siginfo_t *info)
+int	new_pidid(t_pidid **pidid, siginfo_t *info)
 {
-	pidid = malloc(sizeof(t_pidid));
-	if (!pidid)
-		return (-1);
-	pidid->pid = info->si_pid;
-	pidid->index = ft_lstsize(g_pidlist);
-	ft_lstadd_back(&g_pidlist, ft_lstnew(pidid));
-	return (pidid->index);
+	(*pidid)->pid = info->si_pid;
+	(*pidid)->index = ft_lstsize(g_pidlist);
+	ft_lstadd_back(&g_pidlist, ft_lstnew(*pidid));
+	return ((*pidid)->index);
 }
 
 void	print_signal(int sig, int index, int pid)
@@ -37,7 +34,6 @@ void	print_signal(int sig, int index, int pid)
 	bitcount[index]++;
 	if (bitcount[index] == 8)
 	{
-
 		if (rechar[index] == '\0')
 		{
 			ft_printf("%s\n", str[index]);
