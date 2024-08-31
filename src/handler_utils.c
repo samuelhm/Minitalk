@@ -6,44 +6,45 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/31 02:36:54 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 06:28:20 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/09/01 00:58:33 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-int	new_pidid(t_pidid **pidid, siginfo_t *info)
+void	stop_signals(sigset_t *oldset)
 {
-	(*pidid)->pid = info->si_pid;
-	(*pidid)->index = ft_lstsize(g_pidlist);
-	ft_lstadd_back(&g_pidlist, ft_lstnew(*pidid));
-	return ((*pidid)->index);
+	sigset_t	block_set;
+
+	sigemptyset(&block_set);
+	sigaddset(&block_set, SIGUSR1);
+	sigaddset(&block_set, SIGUSR2);
+	sigprocmask(SIG_BLOCK, &block_set, oldset);
 }
 
 void	print_signal(int sig, int index, int pid)
 {
-	static int				bitcount[MAX_CLIENT];
-	static unsigned char	rechar[MAX_CLIENT];
-	static char				*str[MAX_CLIENT];
+	static int				bitcount;
+	static unsigned char	rechar;
+	static char				*str;
 
-	if (!str[index])
-		str[index] = ft_calloc(sizeof(char), 1);
-	rechar[index] <<= 1;
+	if (!str)
+		str = ft_calloc(sizeof(char), 1);
+	rechar <<= 1;
 	if (sig == SIGUSR1)
-		rechar[index] |= 1;
-	bitcount[index]++;
-	if (bitcount[index] == 8)
+		rechar |= 1;
+	bitcount++;
+	if (bitcount == 8)
 	{
-		if (rechar[index] == '\0')
+		if (rechar == '\0')
 		{
 			ft_printf("%s\n", str[index]);
-			free(str[index]);
-			str[index] = NULL;
+			free(str);
+			str = NULL;
 		}
 		else
-			str[index] = ft_charjoin(str[index], rechar[index]);
-		bitcount[index] = 0;
-		rechar[index] = 0;
-		kill(pid, SIGUSR1);
+			str = ft_charjoin(str, rechar);
+		bitcount = 0;
+		rechar = 0;
 	}
 }
