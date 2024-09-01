@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:27:18 by shurtado          #+#    #+#             */
-/*   Updated: 2024/08/31 06:29:38 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/09/01 21:40:29 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,11 @@ static void	send_next_char(char *str, int s_pid)
 {
 	int	bit;
 	int	i;
+	int	timeout;
 
 	i = 7;
+	timeout = 0;
+	g_received = 0;
 	while (i >= 0)
 	{
 		bit = (*str >> i) & 1;
@@ -33,28 +36,25 @@ static void	send_next_char(char *str, int s_pid)
 			kill(s_pid, SIGUSR1);
 		else
 			kill(s_pid, SIGUSR2);
+		while (!g_received && timeout < 500)
+		{
+			usleep(50);
+			timeout += 50;
+		}
+		timeout = 0;
+		if (!g_received)
+			continue ;
+		g_received = 0;
 		i--;
-		usleep(50);
 	}
 }
 
 void	send_message(int s_pid, char *str)
 {
-	int	timeout;
-
-	timeout = INT_MAX;
 	while (1)
 	{
-		g_received = 0;
 		send_next_char(str, s_pid);
-		while (!g_received && timeout > 0)
-		{
-			usleep(1);
-			timeout -= 1;
-		}
-		if (timeout <= 0 && g_received == 0)
-			continue ;
-		else if (*str == '\0')
+		if (*str == '\0')
 			break ;
 		else
 			str++;

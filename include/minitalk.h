@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:28:01 by shurtado          #+#    #+#             */
-/*   Updated: 2024/09/01 00:58:33 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/09/01 21:25:03 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 # include <sys/types.h>
 # include <limits.h>
 
-# ifndef MAX_CLIENT
-#  define MAX_CLIENT 500
+# ifndef TIMEOUT
+#  define TIMEOUT 1000000
 # endif
 
 typedef struct s_pidid
@@ -29,11 +29,9 @@ typedef struct s_pidid
 	int				index;
 }	t_pidid;
 
-extern t_list				*g_pidlist;
 // VARS
 typedef struct sigaction	t_sigaction;
 
-void	stop_signals(sigset_t *oldset);
-void	print_signal(int sig, int index, int pid);
+void	print_signal(int sig);
 
 #endif

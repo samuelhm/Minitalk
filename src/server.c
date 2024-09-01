@@ -6,23 +6,54 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:26:03 by shurtado          #+#    #+#             */
-/*   Updated: 2024/09/01 01:19:29 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/09/01 21:37:28 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-t_list	*g_pidlist;
+volatile int	g_actualpid;
 // se debe usar como global, ya que no se puede pasar argumentos al
 // signal handler, la firma ya está definida.
 
 void	signal_handler(int sig, siginfo_t *info, void *context)
 {
-	t_list	*current;
+	(void)context;
+	if (g_actualpid == 0)
+		g_actualpid = info->si_pid;
+	if (info->si_pid == g_actualpid)
+	{
+		print_signal(sig);
+		kill(info->si_pid, SIGUSR1);
+	}
+}
 
-	current = ft_lstnew((void *)info);
-	ft_lstadd_back(&g_pidlist, current);
-	kill(info->si_pid, SIGUSR1);
+void	print_signal(int sig)
+{
+	static int				bitcount;
+	static unsigned char	rechar;
+	static char				*str;
+
+	if (!str)
+		str = ft_calloc(sizeof(char), 1);
+	rechar <<= 1;
+	if (sig == SIGUSR1)
+		rechar |= 1;
+	bitcount++;
+	if (bitcount == 8)
+	{
+		if (rechar == '\0')
+		{
+			ft_printf("%s\n", str);
+			free(str);
+			str = NULL;
+			g_actualpid = 0;
+		}
+		else
+			str = ft_charjoin(str, rechar);
+		bitcount = 0;
+		rechar = 0;
+	}
 }
 
 static void	start_signal(t_sigaction *sa)
@@ -34,51 +65,16 @@ static void	start_signal(t_sigaction *sa)
 	sigaction(SIGUSR2, sa, NULL);
 }
 
-void	process_lst(int ppid)
-{
-	t_list		*lst;
-	char		*buf;
-	static int	i;
-	t_list		*tmp;
-
-	lst = g_pidlist;
-	if (!lst)
-		return ;
-	ppid = ((siginfo_t *)(lst->content))->si_pid;
-	while (lst)
-	{
-		if (ppid == ((siginfo_t *)(lst->content))->si_pid)
-		{
-			print_signal(((siginfo_t *)(lst->content))->si_signo, i, ppid);
-			tmp = lst->next;
-			ft_lst_deletenode(lst);
-			lst = tmp;
-		}
-		else
-			lst = lst->next;
-		if (!lst)
-		{
-			i++;
-			lst = g_pidlist;
-			ppid = ((siginfo_t *)(lst->content))->si_pid;
-		}
-	}
-}
-
 int	main(void)
 {
-	t_sigaction	sa;
-	sigset_t	set;
+	t_sigaction		sa;
 
-	g_pidlist = NULL;
+	g_actualpid = 0;
 	ft_printf("Server PID: %d\n", getpid());
 	start_signal(&sa);
 	while (1)
 	{
-		usleep(100000);
-		stop_signals(&set);
-		process_lst(0);
-		sigprocmask(SIG_SETMASK, &set, NULL);
+		pause();
 	}
 	return (0);
 }

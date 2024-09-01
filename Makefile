@@ -6,7 +6,7 @@
 #    By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/27 02:23:38 by shurtado          #+#    #+#              #
-#    Updated: 2024/08/31 02:56:33 by shurtado         ###   ########.fr        #
+#    Updated: 2024/09/01 21:43:44 by shurtado         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,7 @@ LDFLAGS = -L$(LIBFT_DIR)
 INCLUDES = -I$(INC_DIR) -I$(LIBFT_DIR)/include
 
 # Debug
-# CFLAGS += -g -O0
+CFLAGS += -g -O0 #-fsanitize=address
 # Directory
 SRC_DIR = src
 OBJ_DIR = obj
@@ -31,7 +31,7 @@ LIBFT_DIR = $(LIB_DIR)/libft
 LIBFT = $(LIBFT_DIR)/libft.a
 
 # Source + obj
-SRV_SRCS_FILES = server.c handler_utils.c
+SRV_SRCS_FILES = server.c
 CLT_SRCS_FILES = client.c
 SSRCS = $(addprefix $(SRC_DIR)/,$(SRV_SRCS_FILES))
 CSRCS = $(addprefix $(SRC_DIR)/,$(CLT_SRCS_FILES))
