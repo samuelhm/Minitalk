@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:27:18 by shurtado          #+#    #+#             */
-/*   Updated: 2024/09/01 21:40:29 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/09/02 01:05:25 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	send_next_char(char *str, int s_pid)
 			kill(s_pid, SIGUSR1);
 		else
 			kill(s_pid, SIGUSR2);
-		while (!g_received && timeout < 500)
+		while (!g_received && timeout < TIMEOUT)
 		{
 			usleep(50);
 			timeout += 50;

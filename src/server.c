@@ -6,54 +6,75 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:26:03 by shurtado          #+#    #+#             */
-/*   Updated: 2024/09/01 21:37:28 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/09/02 02:32:06 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minitalk.h"
 
-volatile int	g_actualpid;
-// se debe usar como global, ya que no se puede pasar argumentos al
-// signal handler, la firma ya está definida.
+static void	reset_values(char **buffer, int *bcount, unsigned char *rechar)
+{
+	*bcount = 0;
+	*rechar = 0;
+	if (*buffer)
+		free(*buffer);
+	*buffer = NULL;
+}
+
+static int	print_signal(int sig, int index, int pid)
+{
+	static int				bitcount[MAX_CLIENT];
+	static unsigned char	rechar[MAX_CLIENT];
+	static char				*str[MAX_CLIENT];
+
+	if (!str[index])
+		str[index] = ft_calloc(sizeof(char), 1);
+	rechar[index] <<= 1;
+	if (sig == SIGUSR1)
+		rechar[index] |= 1;
+	bitcount[index]++;
+	if (bitcount[index] == 8)
+	{
+		if (rechar[index] == '\0')
+		{
+			ft_printf("%s\n", str[index]);
+			reset_values(&str[index], &bitcount[index], &rechar[index]);
+			return (AVAILABLE);
+		}
+		else
+			str[index] = ft_charjoin(str[index], rechar[index]);
+		bitcount[index] = 0;
+		rechar[index] = 0;
+	}
+	return (pid);
+}
 
 void	signal_handler(int sig, siginfo_t *info, void *context)
 {
+	static int	index[MAX_CLIENT];
+	int			i;
+
 	(void)context;
-	if (g_actualpid == 0)
-		g_actualpid = info->si_pid;
-	if (info->si_pid == g_actualpid)
+	i = -1;
+	while (index[++i] > 0)
 	{
-		print_signal(sig);
-		kill(info->si_pid, SIGUSR1);
-	}
-}
-
-void	print_signal(int sig)
-{
-	static int				bitcount;
-	static unsigned char	rechar;
-	static char				*str;
-
-	if (!str)
-		str = ft_calloc(sizeof(char), 1);
-	rechar <<= 1;
-	if (sig == SIGUSR1)
-		rechar |= 1;
-	bitcount++;
-	if (bitcount == 8)
-	{
-		if (rechar == '\0')
+		if (index[i] == AVAILABLE)
+			continue ;
+		if (info->si_pid == index[i])
 		{
-			ft_printf("%s\n", str);
-			free(str);
-			str = NULL;
-			g_actualpid = 0;
+			index[i] = print_signal(sig, i, info->si_pid);
+			kill(info->si_pid, SIGUSR1);
+			return ;
 		}
-		else
-			str = ft_charjoin(str, rechar);
-		bitcount = 0;
-		rechar = 0;
 	}
+	i = 0;
+	while (index[i] != 0 && index[i] != AVAILABLE)
+		i++;
+	if (i >= MAX_CLIENT)
+		return ;
+	index[i] = info->si_pid;
+	index[i] = print_signal(sig, i, info->si_pid);
+	kill(info->si_pid, SIGUSR1);
 }
 
 static void	start_signal(t_sigaction *sa)
@@ -69,7 +90,6 @@ int	main(void)
 {
 	t_sigaction		sa;
 
-	g_actualpid = 0;
 	ft_printf("Server PID: %d\n", getpid());
 	start_signal(&sa);
 	while (1)

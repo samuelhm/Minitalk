@@ -6,7 +6,7 @@
 #    By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/27 02:23:38 by shurtado          #+#    #+#              #
-#    Updated: 2024/09/01 21:43:44 by shurtado         ###   ########.fr        #
+#    Updated: 2024/09/02 02:39:25 by shurtado         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,8 @@ SSRCS = $(addprefix $(SRC_DIR)/,$(SRV_SRCS_FILES))
 CSRCS = $(addprefix $(SRC_DIR)/,$(CLT_SRCS_FILES))
 SOBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SSRCS))
 COBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(CSRCS))
+SDEPS = $(SOBJS:.o=.d)
+CDEPS = $(COBJS:.o=.d)
 
 # Main entrance
 all: libft $(SERVER) $(CLIENT)
@@ -84,6 +86,6 @@ fclean: clean
 re: fclean all
 
 # Include Dependences (header files)
--include $(OBJS:.o=.d)
+-include $(SDEPS) $(CDEPS)
 
 .PHONY: all clean fclean re

@@ -6,7 +6,7 @@
 /*   By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/27 02:28:01 by shurtado          #+#    #+#             */
-/*   Updated: 2024/09/01 21:25:03 by shurtado         ###   ########.fr       */
+/*   Updated: 2024/09/02 02:44:15 by shurtado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,13 @@
 # include <limits.h>
 
 # ifndef TIMEOUT
-#  define TIMEOUT 1000000
+#  define TIMEOUT 500
+# endif
+# ifndef MAX_CLIENT
+#  define MAX_CLIENT 500
+# endif
+# ifndef AVAILABLE
+#  define AVAILABLE 2147483647
 # endif
 
 typedef struct s_pidid
@@ -31,7 +37,5 @@ typedef struct s_pidid
 
 // VARS
 typedef struct sigaction	t_sigaction;
-
-void	print_signal(int sig);
 
 #endif
