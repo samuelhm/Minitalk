@@ -6,7 +6,7 @@
 #    By: shurtado <shurtado@student.42barcelona.fr> +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/27 02:23:38 by shurtado          #+#    #+#              #
-#    Updated: 2024/09/02 14:50:14 by shurtado         ###   ########.fr        #
+#    Updated: 2024/09/02 14:53:37 by shurtado         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,8 @@
 CC = cc
 SERVER = server
 CLIENT = client
-SERVER_BONUS = server
-CLIENT_BONUS = client
+SERVER_BONUS = server_bonus
+CLIENT_BONUS = client_bonus
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS = -L$(LIBFT_DIR)
 INCLUDES = -I$(INC_DIR) -I$(LIBFT_DIR)/include
@@ -98,8 +98,16 @@ fclean: clean
 		rm -f $(SERVER); \
 		echo "\033[1;31m$(SERVER) deleted\033[0m"; \
 	fi
+	@if [ -f "$(SERVER_BONUS)" ]; then \
+		rm -f $(SERVER_BONUS); \
+		echo "\033[1;31m$(SERVER) deleted\033[0m"; \
+	fi
 	@if [ -f "$(CLIENT)" ]; then \
 		rm -f $(CLIENT); \
+		echo "\033[1;31m$(CLIENT) deleted\033[0m"; \
+	fi
+	@if [ -f "$(CLIENT_BONUS)" ]; then \
+		rm -f $(CLIENT_BONUS); \
 		echo "\033[1;31m$(CLIENT) deleted\033[0m"; \
 	fi
 
